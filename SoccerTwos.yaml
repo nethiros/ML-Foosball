@@ -1,0 +1,37 @@
+behaviors:
+  KickerAgent:
+    trainer_type: poca  # Verwendung des POCA-Trainers (PPO with Coach and Adaptive).
+    
+    hyperparameters:
+      batch_size: 2048  # Anzahl der Erfahrungen, die gleichzeitig verarbeitet werden, um die Gradienten zu berechnen.
+      buffer_size: 20480  # Größe des Puffers, der die gesammelten Erfahrungen speichert, bevor das Lernen beginnt.
+      learning_rate: 0.0003  # Lernrate, die bestimmt, wie schnell das Modell aus Fehlern lernt.
+      beta: 0.01  # Stärke der Entropiestrafe, um die Entdeckung neuer Strategien zu fördern.
+      epsilon: 0.2  # Clipping-Parameter für PPO, um zu verhindern, dass Updates zu groß sind.
+      lambd: 0.95  # Parameter für den GAE (Generalized Advantage Estimation), um den Bias und die Varianz des Vorteils zu steuern.
+      num_epoch: 3  # Anzahl der Durchläufe über den Puffer während des Lernens.
+      learning_rate_schedule: constant  # Die Lernrate bleibt während des gesamten Trainings konstant.
+    
+    network_settings:
+      normalize: false  # Keine Normalisierung der Eingaben.
+      hidden_units: 512  # Anzahl der Neuronen in den verborgenen Schichten des neuronalen Netzes.
+      num_layers: 2  # Anzahl der verborgenen Schichten im neuronalen Netz.
+      vis_encode_type: simple  # Art des visuellen Encoders, falls visuelle Beobachtungen verwendet werden (hier eher irrelevant, falls keine Bilder verwendet werden).
+    
+    reward_signals:
+      extrinsic:
+        gamma: 0.99  # Abzinsungsfaktor für zukünftige Belohnungen, hoher Wert, um längerfristige Belohnungen zu berücksichtigen.
+        strength: 1.0  # Stärke des extrinsischen Belohnungssignals.
+
+    keep_checkpoints: 5  # Anzahl der zu speichernden Checkpoints.
+    max_steps: 50000000  # Maximale Anzahl an Schritten im Training. Bei Erreichen dieses Wertes stoppt das Training.
+    time_horizon: 500  # Zeit-Horizont, nach dem der Agent die gesammelten Erfahrungen verwendet, um einen Vorteil zu berechnen.
+    summary_freq: 10000  # Häufigkeit der Protokollierung und Modellzusammenfassung (in Schritten).
+
+    self_play:
+      save_steps: 50000  # Anzahl der Schritte zwischen dem Speichern von Checkpoints während des Self-Play-Trainings.
+      team_change: 200000  # Anzahl der Schritte zwischen Teamwechseln, um dem Agenten zu ermöglichen, beide Seiten des Spiels zu lernen.
+      swap_steps: 2000  # Anzahl der Schritte zwischen dem Agenten- und Gegnerwechsel während des Trainings.
+      window: 10  # Größe des Fensters für das Elo-Ranking des Gegners.
+      play_against_latest_model_ratio: 0.5  # Wahrscheinlichkeit, dass der Agent gegen das neueste Modell antritt, anstatt gegen das Beste.
+      initial_elo: 1200.0  # Anfangs-Elo-Wert für den Agenten im Self-Play.
